@@ -1,0 +1,56 @@
+.intro {
+  display: flex;
+  padding: 7rem 0;
+  align-items: center;
+  justify-content: space-between;
+  height: 89.1vh;
+}
+
+.introduction {
+  margin-inline: 3rem;
+}
+.introduction * {
+  margin-top: 3rem;
+  transition: 0.32s;
+}
+.introduction h1 {
+  font-size: 4rem;
+  text-transform: uppercase;
+}
+.introduction h1:hover {
+  transform: translateX(30px);
+}
+.introduction p {
+  font-size: 2rem;
+}
+.introduction p:hover {
+  transform: translateX(30px);
+}
+.introduction button {
+  font-size: 1.3rem;
+  background-color: #379683;
+}
+
+.illustration {
+  width: 100%;
+}
+
+.list {
+  position: relative;
+  width: 100%;
+}
+
+.item img {
+  width: 400px;
+  height: 400px;
+}
+@media (max-width: 600px) {
+  .intro {
+    display: block;
+    height: 100%;
+  }
+  .intro .item img {
+    width: 350px !important;
+    height: 300px !important;
+  }
+}

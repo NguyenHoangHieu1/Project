@@ -1,0 +1,36 @@
+.orderContent {
+  padding: 2rem 0;
+  background-color: #edf5e1;
+  border-radius: 1rem;
+}
+.orderList {
+  padding: 1rem;
+}
+
+.order {
+  border: 1px solid black;
+  padding: 1rem;
+  border-radius: 1rem;
+  margin: 1rem 0;
+}
+.orderCost {
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 1rem;
+}
+.product {
+  border-top: 1px solid #32c76b;
+  border-bottom: 1px solid #32c76b;
+  padding: 1rem 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.productInfo img {
+  width: clamp(12rem, 10%, 30rem);
+  /* aspect-ratio: 2; */
+}
+
+.productAction {
+  white-space: nowrap;
+}

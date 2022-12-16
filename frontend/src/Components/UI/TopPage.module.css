@@ -1,0 +1,10 @@
+.goUp {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding: 1rem;
+  z-index: 5;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.352);
+  color: white;
+}

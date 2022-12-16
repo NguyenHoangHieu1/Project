@@ -1,0 +1,8 @@
+.inputContainer {
+  padding: 1rem 0;
+}
+
+.inputContainer label {
+  display: block;
+  font-size: 1.5rem;
+}

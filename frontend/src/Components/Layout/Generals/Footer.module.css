@@ -1,0 +1,31 @@
+.footer {
+  background-color: black;
+  color: white;
+  padding-inline: 2rem;
+}
+.footerInfo {
+  display: flex;
+  padding: 1rem 2rem;
+  justify-content: space-between;
+}
+.item {
+  display: inline;
+  margin-inline: 0.5rem;
+  font-size: 2rem;
+  cursor: pointer;
+  color: rgba(252, 252, 252, 0.333);
+}
+
+.item i {
+  transition: 0.32s;
+}
+
+.item:hover i {
+  color: rgba(252, 252, 252, 0.986);
+}
+
+.footerEnd {
+  text-align: center;
+  background-color: rgba(36, 35, 35, 0.376);
+  padding: 0.2rem 0;
+}

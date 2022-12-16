@@ -1,0 +1,65 @@
+.products {
+  padding: 2rem 0;
+  border-radius: 1rem;
+  background-color: #edf5e1;
+}
+
+.fixedButton {
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title h3 {
+  font-size: 2rem;
+  text-decoration: underline;
+}
+
+.title p {
+  font-size: 1.2rem;
+  font-style: italic;
+  padding-top: 1rem;
+}
+
+.listOfProducts {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.filter {
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.filter select {
+  padding: 0.2rem;
+  font-size: 1.2rem;
+}
+
+.pagination {
+  text-align: center;
+}
+
+.pagination a:hover {
+  background-color: #379683;
+  transition: 0.32s;
+  color: white;
+}
+
+.page,
+.mainPage {
+  color: black;
+  border: 1px solid #379683;
+  padding: 0.2rem 0.5rem;
+}
+.mainPage {
+  background-color: #379683;
+  color: white;
+}

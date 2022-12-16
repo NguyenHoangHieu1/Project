@@ -1,0 +1,27 @@
+.cart {
+  padding: 2rem 2rem;
+  border-radius: 1rem;
+  background-color: #edf5e1;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+.cart img {
+  width: 30%;
+}
+.product {
+  display: flex;
+  border: 1px solid #135933;
+  padding: 1rem;
+  align-items: center;
+  margin: 1rem 0;
+  border-radius: 1rem;
+}
+.productAction {
+  white-space: nowrap;
+}
+
+.filledUpSpace {
+  flex: 1;
+}

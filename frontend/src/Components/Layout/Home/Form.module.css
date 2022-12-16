@@ -1,0 +1,51 @@
+.contact {
+  background-color: #fff;
+  padding: 2rem 0;
+  margin: 2rem 0;
+  border-radius: 2rem;
+  text-align: center;
+}
+.formInput {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+@media (max-width: 600px) {
+  .formInput {
+    display: flex;
+    flex-direction: column;
+  }
+}
+.formInput li {
+  text-align: left;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 2rem;
+}
+
+.appear {
+  animation: showUp 1s ease-in-out;
+}
+
+.disappear {
+  animation: disappear 1s ease-in-out;
+}
+
+@keyframes showUp {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes disappear {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

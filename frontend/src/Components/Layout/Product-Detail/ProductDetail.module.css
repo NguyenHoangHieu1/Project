@@ -1,0 +1,21 @@
+.detail {
+  background-color: #edf5e1;
+  border-radius: 2rem;
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.detail img {
+  width: 30%;
+  border-radius: 2rem;
+}
+
+.detail input {
+  font-size: 1.2rem;
+  width: 15%;
+}
