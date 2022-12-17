@@ -6,8 +6,7 @@ import classes from "./Auth.module.css";
 import useUserInput from "../../../../customHooks/useUserInput";
 import React, { useState, useEffect, ReactNode } from "react";
 import ModalBackdrop from "../../../UI/ModalBackdrop";
-import Error from "../../../UI/Error";
-import Success from "../../../UI/Success";
+
 import { useAppDispatch } from "../../../../store";
 import { authActions } from "../../../../store/auth";
 const Signup: React.FC<props> = (props) => {
@@ -22,7 +21,11 @@ const Signup: React.FC<props> = (props) => {
     onFocus: emailFocus,
     reset: emailReset,
   } = useUserInput((value) => {
-    return value.includes("@");
+    if (typeof value === "string") {
+      return value.includes("@");
+    } else {
+      return value > 0;
+    }
   });
   const {
     valueInput: usernameInput,
@@ -32,7 +35,11 @@ const Signup: React.FC<props> = (props) => {
     onFocus: usernameFocus,
     reset: usernameReset,
   } = useUserInput((value) => {
-    return value.length > 5;
+    if (typeof value === "string") {
+      return value.includes("@");
+    } else {
+      return value > 0;
+    }
   });
   const {
     valueInput: passwordInput,
@@ -42,7 +49,11 @@ const Signup: React.FC<props> = (props) => {
     onFocus: passwordFocus,
     reset: passwordReset,
   } = useUserInput((value) => {
-    return value.length > 5;
+    if (typeof value === "string") {
+      return value.includes("@");
+    } else {
+      return value > 0;
+    }
   });
 
   useEffect(() => {
@@ -89,10 +100,6 @@ const Signup: React.FC<props> = (props) => {
   const passwordClassName = passwordInvalid ? true : false;
   return (
     <section className={classes.login}>
-      {error.length > 0 && (
-        <Error>Please enter your information to Signup!</Error>
-      )}
-      {success.length > 0 && <Success>Signup successfully!</Success>}
       <ModalBackdrop onHideAuth={props.onHideAuth?.bind(null, false)}>
         <header className={classes.titleAuth}> Signup </header>
         <form onSubmit={submitHandler} className={classes.formAuth}>

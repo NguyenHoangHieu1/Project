@@ -8,7 +8,6 @@ import ProductsLayout from "./Components/Layout/Home/ProductsHome";
 import ProductsPage from "./Components/Layout/Products/ProductsPage";
 import ProductDetail from "./Components/Layout/Product-Detail/ProductDetail";
 import Cart from "./Components/Layout/Cart/Cart";
-// ----------------------------------------------------------------------------
 import { Switch, Route, Redirect } from "react-router-dom";
 import React, { Fragment, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "./store/index";
@@ -19,11 +18,20 @@ import props from "./Interfaces/Props";
 import Signup from "./Components/Layout/Authentication/Popup/Signup";
 import { authActions } from "./store/auth";
 import useApi from "./customHooks/useApi";
+import { Response } from "./Interfaces/Response";
+import { productActions } from "./store/product";
+import Notification from "./Components/UI/Notification";
 const App: React.FC<props> = () => {
-  const dataApi = useApi("/");
+  const dispatch = useAppDispatch();
+  const NotificationDialog = useAppSelector((state) => state.ui);
+  const dataApi = useApi("/", {
+    useData(data: Response) {
+      dispatch(productActions.replaceProducts(data.products));
+    },
+  });
+  console.log(NotificationDialog);
   const [login, setLogin] = useState(false);
   const [signup, setSignup] = useState(false);
-  const dispatch = useAppDispatch();
   const isLoggedIn = useAppSelector((state) => state.auth).isLoggedIn;
   useEffect(() => {
     dataApi();
@@ -51,6 +59,11 @@ const App: React.FC<props> = () => {
   return (
     <Fragment>
       <Header onShowAuth={showAuth} />
+      {NotificationDialog.messageState.status?.length! > 0 && (
+        <Notification status={NotificationDialog.messageState.status}>
+          {NotificationDialog.messageState.title}
+        </Notification>
+      )}
       <MainContent>
         {login && <Login onHideAuth={hideAuth} />}
         {signup && <Signup onHideAuth={hideAuth} />}

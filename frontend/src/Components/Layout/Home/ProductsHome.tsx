@@ -4,15 +4,10 @@ import props from "../../../Interfaces/Props";
 import Button from "../../UI/Button";
 import ProductItem from "../../Products/ProductItem";
 import classes from "./ProductsHome.module.css";
-import Input from "../../UI/Input";
 import Products from "../../Products/Products";
 import { useAppSelector } from "../../../store";
-import Container from "../../UI/Container";
 const ProductsLayout: React.FC<props> = (props) => {
   const products = useAppSelector((state) => state.product).products;
-  console.log(products);
-  const history = useHistory();
-
   let isEnough: boolean = false;
   let numOfProducts = 2;
 

@@ -6,8 +6,7 @@ import classes from "./Auth.module.css";
 import useUserInput from "../../../../customHooks/useUserInput";
 import React, { useState, useEffect, ReactNode } from "react";
 import ModalBackdrop from "../../../UI/ModalBackdrop";
-import Error from "../../../UI/Error";
-import Success from "../../../UI/Success";
+
 import { authActions } from "../../../../store/auth";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 const Login: React.FC<props> = (props) => {
@@ -80,10 +79,6 @@ const Login: React.FC<props> = (props) => {
   const passwordClassName = passwordInvalid ? true : false;
   return (
     <section className={classes.login}>
-      {error.length > 0 && (
-        <Error>Please enter your information to login!</Error>
-      )}
-      {success.length > 0 && <Success>Login successfully!</Success>}
       <ModalBackdrop onHideAuth={props.onHideAuth?.bind(null, true)}>
         <header className={classes.titleAuth}> Login </header>
         <form onSubmit={submitHandler} className={classes.formAuth}>

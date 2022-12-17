@@ -1,0 +1,9 @@
+.success {
+  border: 2px solid rgb(122, 246, 69);
+  background-color: rgb(122, 246, 69);
+}
+
+.loading {
+  border: 2px solid rgb(100, 102, 99);
+  background-color: rgb(100, 102, 99);
+}

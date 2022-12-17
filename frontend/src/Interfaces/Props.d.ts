@@ -1,4 +1,4 @@
-import { ReactNode, Ref } from "react";
+import { FormEvent, ReactNode, Ref } from "react";
 import { Product } from "./Product";
 
 interface props {
@@ -8,7 +8,7 @@ interface props {
   product?: Product;
   listOfImages?: ReactNode[];
   inputs?: [];
-  ref?: Ref;
+  ref?: Ref<HTMLElement>;
   value?: any;
   onChange?: (e: FormEvent<HTMLInputElement>) => void;
   onFocus?: () => void;
@@ -25,6 +25,7 @@ interface props {
   title?: string;
   onShowAuth?: (authVer?: boolean) => void;
   onHideAuth?: (authVer?: boolean) => void;
+  status?: "success" | "loading";
 }
 
 export default props;

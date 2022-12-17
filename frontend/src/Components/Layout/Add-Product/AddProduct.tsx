@@ -4,13 +4,13 @@ import InputContainer from "../../UI/InputContainer";
 import classes from "./AddProduct.module.css";
 import useUserInput from "../../../customHooks/useUserInput";
 import Button from "../../UI/Button";
-import Error from "../../UI/Error";
-import Success from "../../UI/Success";
+
 import { useAppDispatch } from "../../../store";
-import { addProduct } from "../../../store/product";
+import { productActions } from "../../../store/product";
 import useApi from "../../../customHooks/useApi";
 const AddProduct: React.FC<props> = (props) => {
   const dispatch = useAppDispatch();
+
   const [error, setError] = useState<number[]>([]);
   const [success, setSuccess] = useState<number[]>([]);
   const {
@@ -21,7 +21,11 @@ const AddProduct: React.FC<props> = (props) => {
     reset: titleReset,
     isValid: titleIsValid,
   } = useUserInput((value) => {
-    return value.length > 5;
+    if (typeof value === "string") {
+      return value.length > 5;
+    } else {
+      return value > 0;
+    }
   });
   const {
     valueInput: priceInput,
@@ -31,7 +35,7 @@ const AddProduct: React.FC<props> = (props) => {
     inValid: priceInvalid,
     reset: priceReset,
   } = useUserInput((value) => {
-    return value.length > 5;
+    return value > 0;
   });
   const {
     valueInput: imageInput,
@@ -41,7 +45,11 @@ const AddProduct: React.FC<props> = (props) => {
     reset: imageReset,
     isValid: imageIsValid,
   } = useUserInput((value) => {
-    return value.length > 5;
+    if (typeof value === "string") {
+      return value.length > 5;
+    } else {
+      return value > 0;
+    }
   });
   const {
     valueInput: descriptionInput,
@@ -51,9 +59,28 @@ const AddProduct: React.FC<props> = (props) => {
     reset: descriptionReset,
     isValid: descriptionIsValid,
   } = useUserInput((value) => {
-    return value.length > 5;
+    if (typeof value === "string") {
+      return value.length > 5;
+    } else {
+      return value > 0;
+    }
   });
-
+  const apiHook = useApi("/admin/add-product", {
+    method: "POST",
+    body: {
+      _id: "",
+      title: titleInput,
+      price: +priceInput,
+      imageUrl: imageInput,
+      description: descriptionInput,
+    },
+    headers: {
+      "Content-Type": "application/json",
+    },
+    useData(data) {
+      dispatch(productActions.addProduct(data.product));
+    },
+  });
   useEffect(() => {
     let time: null | NodeJS.Timeout;
     if (error.length > 0 || success.length > 0) {
@@ -84,16 +111,7 @@ const AddProduct: React.FC<props> = (props) => {
     priceReset();
     descriptionReset();
     imageReset();
-    console.log("Hello");
-    dispatch(
-      addProduct({
-        _id: "",
-        title: titleInput,
-        price: +priceInput,
-        imageUrl: imageInput,
-        description: descriptionInput,
-      })
-    );
+    apiHook();
   }
 
   const titleClasses = titleInvalid ? true : false;
@@ -102,12 +120,12 @@ const AddProduct: React.FC<props> = (props) => {
   const descriptionClasses = descriptionInvalid ? true : false;
   return (
     <section className={classes.addProduct}>
-      {error.length > 0 && (
+      {/* {error.length > 0 && (
         <Error>The Product has to be filled in all the forms</Error>
       )}
       {success.length > 0 && (
         <Success>Creating the product successfully</Success>
-      )}
+      )} */}
       <form onSubmit={submitHandler} className={classes.form}>
         <InputContainer
           title="Title"

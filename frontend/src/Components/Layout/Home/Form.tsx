@@ -4,8 +4,7 @@ import Button from "../../UI/Button";
 import classes from "./Form.module.css";
 import useUserInput from "../../../customHooks/useUserInput";
 import props from "../../../Interfaces/Props";
-import Success from "../../UI/Success";
-import Error from "../../UI/Error";
+
 import InputContainer from "../../UI/InputContainer";
 
 const Form: React.FC<props> = (props) => {
@@ -19,8 +18,12 @@ const Form: React.FC<props> = (props) => {
     onChange: nameChange,
     onFocus: nameFocus,
     isValid: nameIsValid,
-  } = useUserInput((value: string) => {
-    return value.length > 5;
+  } = useUserInput((value) => {
+    if (typeof value === "string") {
+      return value.length > 5;
+    } else {
+      return value > 0;
+    }
   });
   const {
     valueInput: reasonInput,
@@ -40,7 +43,11 @@ const Form: React.FC<props> = (props) => {
     onFocus: emailFocus,
     isValid: emailIsValid,
   } = useUserInput((value) => {
-    return value.length > 5;
+    if (typeof value === "string") {
+      return value.length > 5;
+    } else {
+      return value > 0;
+    }
   });
   let formIsValid = nameIsValid && reasonIsValid && emailIsValid;
   useEffect(() => {
@@ -77,23 +84,6 @@ const Form: React.FC<props> = (props) => {
 
   return (
     <section className={classes.contact}>
-      {error[0] == 1 ? (
-        <Error>
-          It seems like you have typed wrong information in the inputs, may you
-          try again ?
-        </Error>
-      ) : (
-        ""
-      )}
-      {success[0] == 1 ? (
-        <Success>
-          {" "}
-          Thank you for contacting us, we will reach out for us as soon as
-          possible{" "}
-        </Success>
-      ) : (
-        ""
-      )}
       <div className={classes.title}>
         <h1>Contact Us!</h1>
       </div>

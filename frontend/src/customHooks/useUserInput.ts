@@ -1,5 +1,5 @@
 import { useState } from "react";
-const useUserInput = (condition: (data: string) => boolean) => {
+const useUserInput = (condition: (data: string | number) => boolean) => {
   const [valueInput, setValueInput] = useState("");
   const [focus, setFocus] = useState(false);
 
