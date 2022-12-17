@@ -1,9 +1,26 @@
 .success {
   border: 2px solid rgb(122, 246, 69);
+  animation: animationPopUp 4s ease-in-out forwards;
   background-color: rgb(122, 246, 69);
 }
 
 .loading {
   border: 2px solid rgb(100, 102, 99);
   background-color: rgb(100, 102, 99);
+  animation: animationPopUp 8s ease-in-out forwards;
+}
+
+@keyframes animationPopUp {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

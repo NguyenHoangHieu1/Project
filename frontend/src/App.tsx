@@ -21,6 +21,7 @@ import useApi from "./customHooks/useApi";
 import { Response } from "./Interfaces/Response";
 import { productActions } from "./store/product";
 import Notification from "./Components/UI/Notification";
+import { uiActions } from "./store/ui";
 const App: React.FC<props> = () => {
   const dispatch = useAppDispatch();
   const NotificationDialog = useAppSelector((state) => state.ui);
@@ -29,17 +30,25 @@ const App: React.FC<props> = () => {
       dispatch(productActions.replaceProducts(data.products));
     },
   });
-  console.log(NotificationDialog);
   const [login, setLogin] = useState(false);
   const [signup, setSignup] = useState(false);
   const isLoggedIn = useAppSelector((state) => state.auth).isLoggedIn;
   useEffect(() => {
     dataApi();
+
     const isLoggedIn = localStorage.getItem("isLoggedIn");
     if (isLoggedIn) {
       dispatch(authActions.setAuth());
     }
   }, []);
+  useEffect(() => {
+    const time = setTimeout(() => {
+      dispatch(uiActions.closeMessage({}));
+    }, 4000);
+    return () => {
+      clearTimeout(time);
+    };
+  }, [NotificationDialog.messageState.status]);
   function showAuth(authVer?: boolean) {
     console.log(authVer);
     if (authVer == true) {

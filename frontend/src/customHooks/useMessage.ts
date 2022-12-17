@@ -1,35 +1,24 @@
 import { useState, useEffect } from "react";
+import { useAppDispatch } from "../store";
+import { uiActions } from "../store/ui";
+import { ConfigurationMessage } from "../Interfaces/ConfigurationMessage";
 const useMessage = () => {
-  const [error, setError] = useState<number[]>([]);
-  const [success, setSuccess] = useState<number[]>([]);
-  useEffect(() => {
-    let time: null | NodeJS.Timeout;
-    if (error.length > 0 || success.length > 0) {
-      time = setTimeout(() => {
-        setError([]);
-        setSuccess([]);
-      }, 5000);
-    }
-    return () => {
-      if (time != null) {
-        clearTimeout(time);
-      }
-    };
-  }, [error, success]);
-  function setErrorHandler() {
-    setError([1]);
-    setSuccess([]);
-  }
-  function setSuccessHandler() {
-    setError([]);
-    setSuccess([1]);
-  }
-  return {
-    error,
-    success,
-    setErrorHandler,
-    setSuccessHandler,
+  const dispatch = useAppDispatch();
+  const changeMessageHandler = (
+    state: string,
+    configuration: ConfigurationMessage
+  ) => {
+    dispatch(
+      uiActions.openMessage({
+        stateChange: {
+          message: configuration.message,
+          title: configuration.title,
+          status: configuration.status,
+        },
+      })
+    );
   };
+  return changeMessageHandler;
 };
 
 export default useMessage;

@@ -12,8 +12,8 @@ const postAddProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const description = req.body.description;
     const validationCheck = (0, express_validator_1.validationResult)(req);
-    if (validationCheck.isEmpty()) {
-        return res.status(404).json({ message: "Validation Failed" });
+    if (!validationCheck.isEmpty()) {
+        return res.status(404).json({ message: validationCheck.array()[0].msg });
     }
     product_1.default.create({
         title: title,

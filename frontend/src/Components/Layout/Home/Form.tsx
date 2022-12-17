@@ -6,11 +6,9 @@ import useUserInput from "../../../customHooks/useUserInput";
 import props from "../../../Interfaces/Props";
 
 import InputContainer from "../../UI/InputContainer";
+import useApi from "../../../customHooks/useApi";
 
 const Form: React.FC<props> = (props) => {
-  const [error, setError] = useState<number[]>([]);
-  const [success, setSuccess] = useState<number[]>([]);
-
   const {
     valueInput: nameInput,
     reset: nameReset,
@@ -50,29 +48,11 @@ const Form: React.FC<props> = (props) => {
     }
   });
   let formIsValid = nameIsValid && reasonIsValid && emailIsValid;
-  useEffect(() => {
-    let time: null | NodeJS.Timeout;
-    if (error.length > 0 || success.length > 0) {
-      time = setTimeout(() => {
-        setError([]);
-        setSuccess([]);
-      }, 5000);
-    }
-    return () => {
-      if (time != null) {
-        clearTimeout(time);
-      }
-    };
-  }, [error, success]);
+
   function submitHandler(e: React.FormEvent) {
     e.preventDefault();
     if (!formIsValid) {
-      console.log("Hello Error");
-      setError([1]);
-      setSuccess([]);
     } else {
-      setError([]);
-      setSuccess([1]);
       nameReset();
       reasonReset();
       emailReset();
@@ -98,7 +78,7 @@ const Form: React.FC<props> = (props) => {
         </div>
         <form onSubmit={submitHandler} className={classes.form}>
           <InputContainer
-            title="Name :"
+            title="Name"
             inputValues={{
               inputValue: nameInput,
               inputChange: nameChange,
@@ -109,7 +89,7 @@ const Form: React.FC<props> = (props) => {
           ></InputContainer>
 
           <InputContainer
-            title="Email :"
+            title="Email"
             inputValues={{
               inputValue: emailInput,
               inputChange: emailChange,
@@ -119,7 +99,7 @@ const Form: React.FC<props> = (props) => {
             }}
           ></InputContainer>
           <InputContainer
-            title="Reasons :"
+            title="Reasons"
             inputValues={{
               inputValue: reasonInput,
               inputChange: reasonChange,

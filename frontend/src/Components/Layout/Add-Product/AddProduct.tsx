@@ -1,18 +1,16 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import props from "../../../Interfaces/Props";
 import InputContainer from "../../UI/InputContainer";
 import classes from "./AddProduct.module.css";
 import useUserInput from "../../../customHooks/useUserInput";
 import Button from "../../UI/Button";
-
+import useMessage from "../../../customHooks/useMessage";
 import { useAppDispatch } from "../../../store";
 import { productActions } from "../../../store/product";
 import useApi from "../../../customHooks/useApi";
 const AddProduct: React.FC<props> = (props) => {
   const dispatch = useAppDispatch();
-
-  const [error, setError] = useState<number[]>([]);
-  const [success, setSuccess] = useState<number[]>([]);
+  const changeMessage = useMessage();
   const {
     valueInput: titleInput,
     onChange: titleChange,
@@ -78,40 +76,23 @@ const AddProduct: React.FC<props> = (props) => {
       "Content-Type": "application/json",
     },
     useData(data) {
-      dispatch(productActions.addProduct(data.product));
+      dispatch(productActions.addProduct({ product: data.product }));
     },
   });
-  useEffect(() => {
-    let time: null | NodeJS.Timeout;
-    if (error.length > 0 || success.length > 0) {
-      time = setTimeout(() => {
-        setError([]);
-        setSuccess([]);
-      }, 5000);
-    }
-    return () => {
-      if (time != null) {
-        clearTimeout(time);
-      }
-    };
-  }, [error, success]);
 
   let formValid =
     titleIsValid && priceIsValid && descriptionIsValid && imageIsValid;
   function submitHandler(e: React.FormEvent) {
     e.preventDefault();
+    apiHook();
     if (!formValid) {
-      setError([1]);
-      setSuccess([]);
       return;
     }
-    setSuccess([1]);
-    setError([]);
+
     titleReset();
     priceReset();
     descriptionReset();
     imageReset();
-    apiHook();
   }
 
   const titleClasses = titleInvalid ? true : false;
@@ -120,12 +101,6 @@ const AddProduct: React.FC<props> = (props) => {
   const descriptionClasses = descriptionInvalid ? true : false;
   return (
     <section className={classes.addProduct}>
-      {/* {error.length > 0 && (
-        <Error>The Product has to be filled in all the forms</Error>
-      )}
-      {success.length > 0 && (
-        <Success>Creating the product successfully</Success>
-      )} */}
       <form onSubmit={submitHandler} className={classes.form}>
         <InputContainer
           title="Title"
@@ -191,4 +166,4 @@ const AddProduct: React.FC<props> = (props) => {
   );
 };
 
-export default AddProduct;
+export default React.memo(AddProduct);

@@ -14,7 +14,7 @@
   background-color: rgb(213, 92, 92);
   border-radius: 2rem;
   color: white;
-  opacity: 0;
+  /* opacity: 0; */
   transition: 0.32s;
   z-index: 5;
 }
@@ -25,29 +25,5 @@
     transform: translate(-50%, -50%);
     width: 200px;
     height: 100px;
-  }
-}
-.appear {
-  animation: showUp 1s ease-in-out forwards;
-}
-
-.disappear {
-  animation: goDown 1s ease-in-out forwards;
-}
-
-@keyframes showUp {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@keyframes goDown {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
   }
 }

@@ -6,13 +6,11 @@ import classes from "./Auth.module.css";
 import useUserInput from "../../../../customHooks/useUserInput";
 import React, { useState, useEffect, ReactNode } from "react";
 import ModalBackdrop from "../../../UI/ModalBackdrop";
-
+import useApi from "../../../../customHooks/useApi";
 import { useAppDispatch } from "../../../../store";
 import { authActions } from "../../../../store/auth";
 const Signup: React.FC<props> = (props) => {
   const dispatch = useAppDispatch();
-  const [error, setError] = useState<number[]>([]);
-  const [success, setSuccess] = useState<number[]>([]);
   const {
     valueInput: emailInput,
     inValid: emailInvalid,
@@ -36,7 +34,7 @@ const Signup: React.FC<props> = (props) => {
     reset: usernameReset,
   } = useUserInput((value) => {
     if (typeof value === "string") {
-      return value.includes("@");
+      return value.length > 5;
     } else {
       return value > 0;
     }
@@ -50,42 +48,38 @@ const Signup: React.FC<props> = (props) => {
     reset: passwordReset,
   } = useUserInput((value) => {
     if (typeof value === "string") {
-      return value.includes("@");
+      return value.length > 5;
     } else {
       return value > 0;
     }
   });
-
-  useEffect(() => {
-    let time: null | NodeJS.Timeout;
-    if (error.length > 0 || success.length > 0) {
-      time = setTimeout(() => {
-        setError([]);
-        setSuccess([]);
-      }, 5000);
-    }
-    return () => {
-      if (time != null) {
-        clearTimeout(time);
-      }
-    };
-  }, [error, success]);
+  const apiHook = useApi("/signup", {
+    method: "POST",
+    body: {
+      email: emailInput,
+      username: usernameInput,
+      password: passwordInput,
+    },
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   const formIsValid = usernameIsValid && passwordIsValid && emailIsValid;
 
   function submitHandler(e: React.FormEvent) {
     e.preventDefault();
+    console.log(formIsValid);
     if (!formIsValid) {
-      setError([1]);
-      setSuccess([]);
       return;
     }
-    setSuccess([1]);
-    setError([]);
+    console.log("TRUE");
+
     dispatch(
       authActions.signup({
         account: { username: usernameInput, password: passwordInput },
       })
     );
+    apiHook();
     props.onHideAuth!(false);
   }
 

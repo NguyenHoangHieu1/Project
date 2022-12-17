@@ -11,7 +11,6 @@ const useApi = (url: string, configuration?: configuration) => {
       dispatch(
         uiActions.openMessage({
           stateChange: {
-            message: "Is Loading",
             status: "loading",
             title: "The backend is getting the data for us! Wait a minute",
           },
@@ -23,7 +22,12 @@ const useApi = (url: string, configuration?: configuration) => {
         headers: configuration?.headers ? configuration.headers : {},
       });
       if (!response.ok) {
-        throw new Error("The Server went wrong");
+        if (response.status >= 500) {
+          throw new Error("The Server Went Down");
+        } else {
+          const data = await response.json();
+          throw new Error(data.message);
+        }
       }
       const data = await response.json();
       if (configuration?.useData) {
@@ -31,21 +35,18 @@ const useApi = (url: string, configuration?: configuration) => {
         dispatch(
           uiActions.openMessage({
             stateChange: {
-              message: "Successful",
               status: "success",
-              title: "The Backend successfully gives us data",
+              title: data.message,
             },
           })
         );
       }
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
       dispatch(
         uiActions.openMessage({
           stateChange: {
-            message: "Loading failed",
             status: "error",
-            title: "Oh no! we occured an error",
+            title: err.message,
           },
         })
       );
