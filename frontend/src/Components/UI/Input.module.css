@@ -4,6 +4,7 @@
   border: 2px solid #3919486d;
   outline: none;
   font-size: 1.2rem;
+  width: 100%;
 }
 
 .input:focus {

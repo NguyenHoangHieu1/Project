@@ -43,10 +43,17 @@ const AddProduct: React.FC<props> = (props) => {
     reset: imageReset,
     isValid: imageIsValid,
   } = useUserInput((value) => {
-    if (typeof value === "string") {
-      return value.length > 5;
-    } else {
+    if (
+      typeof value === "string" &&
+      /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/.test(
+        value
+      )
+    ) {
+      return true;
+    } else if (typeof value === "number") {
       return value > 0;
+    } else {
+      return false;
     }
   });
   const {
@@ -76,7 +83,8 @@ const AddProduct: React.FC<props> = (props) => {
       "Content-Type": "application/json",
     },
     useData(data) {
-      dispatch(productActions.addProduct({ product: data.product }));
+      console.log(data);
+      dispatch(productActions.addProduct({ product: data }));
     },
   });
 

@@ -12,20 +12,94 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postSignup = void 0;
+exports.postActivate = exports.postSignup = exports.postLogin = exports.postCheckAccount = void 0;
 const bcryptjs_1 = require("bcryptjs");
 const user_1 = __importDefault(require("../models/user"));
+const express_validator_1 = require("express-validator");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
+const userMail = "hoanghieufro@gmail.com";
+const passMail = "sxucbgjzbburuiig";
+const transport = nodemailer_1.default.createTransport({
+    service: "gmail",
+    auth: {
+        user: userMail,
+        pass: passMail,
+    },
+});
+const postCheckAccount = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Im here again");
+    const userId = req.body.userId;
+    try {
+        const user = yield user_1.default.findById(userId);
+        if (!user) {
+            return res.status(301).json({ message: "No Account found" });
+        }
+        return res.status(202).json({ message: "Account found", userId: userId });
+    }
+    catch (error) {
+        if (!error.status) {
+            error.status = 500;
+        }
+        next(error);
+    }
+});
+exports.postCheckAccount = postCheckAccount;
+const postLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const email = req.body.email;
+    const password = req.body.password;
+    try {
+        const user = yield user_1.default.findOne({ email: email });
+        if (!user) {
+            return res.status(406).json({ message: "Account doesn't exist" });
+        }
+        const doMatch = yield (0, bcryptjs_1.compare)(password, user.password);
+        if (!doMatch) {
+            return res.status(406).json({ message: "Wrong information" });
+        }
+        if (user.token) {
+            return res
+                .status(406)
+                .json({ message: "You haven't activated the account!" });
+        }
+        const token = jsonwebtoken_1.default.sign({
+            email: email,
+            userId: user._id.toString(),
+        }, "reallysecret", { expiresIn: "1h" });
+        return res.status(200).json({
+            message: "Login successfully",
+            token: token,
+            userId: user._id.toString(),
+            validAcc: user.token ? false : true,
+        });
+    }
+    catch (error) {
+        if (!error.status) {
+            error.status = 500;
+        }
+        next(error);
+    }
+});
+exports.postLogin = postLogin;
 const postSignup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email;
     const username = req.body.username;
     const password = req.body.password;
+    const validationCheck = (0, express_validator_1.validationResult)(req);
+    if (!validationCheck.isEmpty()) {
+        return res.status(400).json({ message: validationCheck.array()[0].msg });
+    }
+    let tokenNumber = Math.ceil(Math.random() * 10000);
+    if (tokenNumber <= 999) {
+        tokenNumber += 1000;
+    }
     try {
         const user = yield user_1.default.findOne({ email: email });
         if (user) {
-            return res.status(406).json({ message: "The Account already exist" });
+            return res.status(400).json({ message: "The Account already exist" });
         }
         const hashedPassword = yield (0, bcryptjs_1.hash)(password, 12);
-        const theEnd = yield user_1.default.create({
+        const userInfo = yield user_1.default.create({
             email: email,
             username: username,
             password: hashedPassword,
@@ -34,11 +108,20 @@ const postSignup = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
                 totalQuantity: 0,
                 totalPrice: 0,
             },
+            token: tokenNumber,
+            tokenExp: new Date().getTime() + 36000,
         });
-        console.log("Hello");
-        return res
-            .status(201)
-            .json({ message: "Created Successfully", token: "1" });
+        transport.sendMail({
+            from: userMail,
+            to: email,
+            subject: "Register successfully",
+            html: `
+      <h1>Thank you so much for registering our services</h1>
+      <p>Here is your passcode: ${tokenNumber}</p>
+      <p>Click <a href="http://localhost:3000/activate-password/${userInfo._id.toString()}">here</a> to be able to enter your passcode </p>
+      `,
+        });
+        return res.status(201).json({ message: "Created Successfully" });
     }
     catch (err) {
         if (!err.status) {
@@ -46,36 +129,27 @@ const postSignup = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         }
         next(err);
     }
-    //   User.findOne({ email: email })
-    //     .then((user) => {
-    //       if (user) {
-    //         return res.status(406).json({ message: "The Account already exist" });
-    //       }
-    //       hash(password, 12)
-    //         .then((hashedPassword) => {
-    //           User.create({
-    //             email: email,
-    //             username: username,
-    //             password: hashedPassword,
-    //             cart: {
-    //               cartItems: [],
-    //               totalQuantity: 0,
-    //               totalPrice: 0,
-    //             },
-    //           }).then();
-    //         })
-    //         .catch((err) => {
-    //           if (!err.status) {
-    //             err.status = 500;
-    //           }
-    //           next(err);
-    //         });
-    //     })
-    //     .catch((err) => {
-    //       if (!err.status) {
-    //         err.status = 500;
-    //       }
-    //       next(err);
-    //     });
 });
 exports.postSignup = postSignup;
+const postActivate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const token = req.body.passCode;
+    try {
+        const user = yield user_1.default.findOne({ token: token });
+        if (!user) {
+            return res.status(406).json({ message: "Wrong Pass code" });
+        }
+        user.token = undefined;
+        user.tokenExp = undefined;
+        yield user.save();
+        return res
+            .status(201)
+            .json({ message: "Activate the Account Successfully" });
+    }
+    catch (error) {
+        if (!error.status) {
+            error.status = 500;
+        }
+        next(error);
+    }
+});
+exports.postActivate = postActivate;

@@ -21,7 +21,7 @@ const useApi = (url: string, configuration?: configuration) => {
         body: configuration?.body ? JSON.stringify(configuration.body) : null,
         headers: configuration?.headers ? configuration.headers : {},
       });
-      if (!response.ok) {
+      if (response.status >= 400) {
         if (response.status >= 500) {
           throw new Error("The Server Went Down");
         } else {
@@ -30,16 +30,16 @@ const useApi = (url: string, configuration?: configuration) => {
         }
       }
       const data = await response.json();
+      dispatch(
+        uiActions.openMessage({
+          stateChange: {
+            status: "success",
+            title: data.message,
+          },
+        })
+      );
       if (configuration?.useData) {
-        configuration.useData(data);
-        dispatch(
-          uiActions.openMessage({
-            stateChange: {
-              status: "success",
-              title: data.message,
-            },
-          })
-        );
+        return configuration.useData(data);
       }
     } catch (err: any) {
       dispatch(

@@ -19,7 +19,7 @@ const ProductsLayout: React.FC<props> = (props) => {
     if (index >= numberOfProducts) {
       return;
     } else {
-      if (numberOfProducts >= products.length) {
+      if (numberOfProducts >= 5 || numberOfProducts >= products.length) {
         isEnough = true;
       }
       if (products[0] != undefined) {

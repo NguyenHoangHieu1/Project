@@ -1,15 +1,20 @@
 import { NavLink } from "react-router-dom";
 import classes from "./Header.module.css";
 import Button from "../../UI/Button";
-import { useState } from "react";
+import React, { useState } from "react";
 import props from "../../../Interfaces/Props";
-import { useAppSelector } from "../../../store";
+import useApi from "../../../customHooks/useApi";
+import { useAppDispatch } from "../../../store";
+import { authActions } from "../../../store/auth";
+import useMessage from "../../../customHooks/useMessage";
 
 const Header: React.FC<props> = (props) => {
-  const isLoggedIn = useAppSelector((state) => state.auth).isLoggedIn;
+  const message = useMessage();
+  const dispatch = useAppDispatch();
   const [changeHeaderBar, setChangeHeaderBar] = useState(`${classes.header} `);
+  useApi("/");
   const [menuMobile, setMenuMobile] = useState(false);
-  document.addEventListener("scroll", (e: Event) => {
+  document.addEventListener("scroll", () => {
     if (window.scrollY >= 100) {
       setChangeHeaderBar(`${classes.header} ${classes.changed}`);
     } else {
@@ -20,6 +25,10 @@ const Header: React.FC<props> = (props) => {
     setMenuMobile((prevState) => {
       return !prevState;
     });
+  }
+  function logOutHandler() {
+    message({ title: "Logout Successfully", status: "success" });
+    dispatch(authActions.clearToken({}));
   }
   return (
     <header className={changeHeaderBar}>
@@ -51,7 +60,7 @@ const Header: React.FC<props> = (props) => {
             >
               Producst
             </NavLink>
-            {isLoggedIn && (
+            {props.token && (
               <>
                 <NavLink
                   to="/cart"
@@ -74,18 +83,35 @@ const Header: React.FC<props> = (props) => {
                 >
                   Add Product
                 </NavLink>
+                <NavLink
+                  to="/your-products"
+                  className={classes.item}
+                  activeClassName={classes.itemActive}
+                >
+                  Your Products
+                </NavLink>
               </>
             )}
           </ul>
         </nav>
 
         <div className={classes.buttons}>
-          <Button onClick={props.onShowAuth?.bind(null, true)}>Login</Button>
-          <Button onClick={props.onShowAuth?.bind(null, false)}>Signup</Button>
+          {!props.token ? (
+            <>
+              <Button onClick={props.onShowAuth?.bind(null, true)}>
+                Login
+              </Button>
+              <Button onClick={props.onShowAuth?.bind(null, false)}>
+                Signup
+              </Button>
+            </>
+          ) : (
+            <Button onClick={logOutHandler}>Log out</Button>
+          )}
         </div>
       </div>
     </header>
   );
 };
 
-export default Header;
+export default React.memo(Header);

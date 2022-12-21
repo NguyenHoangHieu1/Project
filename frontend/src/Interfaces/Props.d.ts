@@ -26,6 +26,8 @@ interface props {
   onShowAuth?: (authVer?: boolean) => void;
   onHideAuth?: (authVer?: boolean) => void;
   status?: "success" | "loading";
+  token?: string;
+  userId?: string;
 }
 
 export default props;

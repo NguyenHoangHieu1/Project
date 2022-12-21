@@ -4,14 +4,10 @@ import { uiActions } from "../store/ui";
 import { ConfigurationMessage } from "../Interfaces/ConfigurationMessage";
 const useMessage = () => {
   const dispatch = useAppDispatch();
-  const changeMessageHandler = (
-    state: string,
-    configuration: ConfigurationMessage
-  ) => {
+  const changeMessageHandler = (configuration: ConfigurationMessage) => {
     dispatch(
       uiActions.openMessage({
         stateChange: {
-          message: configuration.message,
           title: configuration.title,
           status: configuration.status,
         },

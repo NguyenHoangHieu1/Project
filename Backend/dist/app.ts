@@ -13,7 +13,6 @@ app.use("/admin", adminRoute);
 app.use(authRoute);
 app.use(mainRoute);
 const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
-  console.log(error.status);
   res.status(error.status).json({ message: error.message, data: error.data });
 };
 app.use(errorHandler);

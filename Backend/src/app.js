@@ -17,7 +17,6 @@ app.use("/admin", admin_1.default);
 app.use(auth_1.default);
 app.use(main_1.default);
 const errorHandler = (error, req, res, next) => {
-    console.log(error.status);
     res.status(error.status).json({ message: error.message, data: error.data });
 };
 app.use(errorHandler);

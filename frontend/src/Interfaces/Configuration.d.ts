@@ -3,5 +3,5 @@ export interface configuration {
   method?: string;
   body?: any;
   headers?: any;
-  useData?: (data: Response) => void;
+  useData?: (data: Response) => void | Response;
 }

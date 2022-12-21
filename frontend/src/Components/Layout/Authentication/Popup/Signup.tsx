@@ -7,10 +7,7 @@ import useUserInput from "../../../../customHooks/useUserInput";
 import React, { useState, useEffect, ReactNode } from "react";
 import ModalBackdrop from "../../../UI/ModalBackdrop";
 import useApi from "../../../../customHooks/useApi";
-import { useAppDispatch } from "../../../../store";
-import { authActions } from "../../../../store/auth";
 const Signup: React.FC<props> = (props) => {
-  const dispatch = useAppDispatch();
   const {
     valueInput: emailInput,
     inValid: emailInvalid,
@@ -20,7 +17,10 @@ const Signup: React.FC<props> = (props) => {
     reset: emailReset,
   } = useUserInput((value) => {
     if (typeof value === "string") {
-      return value.includes("@");
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
+        return true;
+      }
+      return false;
     } else {
       return value > 0;
     }
@@ -48,7 +48,12 @@ const Signup: React.FC<props> = (props) => {
     reset: passwordReset,
   } = useUserInput((value) => {
     if (typeof value === "string") {
-      return value.length > 5;
+      if (
+        /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,}$/.test(value)
+      ) {
+        return true;
+      }
+      return false;
     } else {
       return value > 0;
     }
@@ -68,27 +73,13 @@ const Signup: React.FC<props> = (props) => {
 
   function submitHandler(e: React.FormEvent) {
     e.preventDefault();
-    console.log(formIsValid);
+    apiHook();
     if (!formIsValid) {
       return;
     }
-    console.log("TRUE");
-
-    dispatch(
-      authActions.signup({
-        account: { username: usernameInput, password: passwordInput },
-      })
-    );
-    apiHook();
     props.onHideAuth!(false);
   }
 
-  function buttonHandler() {
-    if (!formIsValid) {
-      return;
-    }
-    // props.onHideAuth!(false);
-  }
   const emailClassName = emailInvalid ? true : false;
   const usernameClassName = usernameInvalid ? true : false;
   const passwordClassName = passwordInvalid ? true : false;
@@ -127,7 +118,7 @@ const Signup: React.FC<props> = (props) => {
               type: "submit",
             }}
           />
-          <Button onClick={buttonHandler}>Signup</Button>
+          <Button>Signup</Button>
         </form>
       </ModalBackdrop>
     </section>

@@ -2,11 +2,13 @@ import express from "express";
 import { postAddProduct } from "../controllers/admin";
 // import { getIndex } from "../controllers/main";
 import { body } from "express-validator";
+import isAuth from "../middleware/is-Auth";
 
 const adminRoute = express.Router();
 
 adminRoute.post(
   "/add-product",
+  isAuth,
   [
     body("title", "The title has to be 5 characters long")
       .trim()

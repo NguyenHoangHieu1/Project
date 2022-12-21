@@ -9,20 +9,27 @@ import ModalBackdrop from "../../../UI/ModalBackdrop";
 
 import { authActions } from "../../../../store/auth";
 import { useAppDispatch, useAppSelector } from "../../../../store";
+import useApi from "../../../../customHooks/useApi";
+import { Response } from "../../../../Interfaces/Response";
+import { Route } from "react-router";
 const Login: React.FC<props> = (props) => {
   const dispatch = useAppDispatch();
-  const account = useAppSelector((state) => state.auth).account;
-  const [error, setError] = useState<number[]>([]);
-  const [success, setSuccess] = useState<number[]>([]);
   const {
-    valueInput: usernameInput,
-    inValid: usernameInvalid,
-    isValid: usernameIsValid,
-    onChange: usernameChange,
-    onFocus: usernameFocus,
-    reset: usernameReset,
+    valueInput: emailInput,
+    inValid: emailInvalid,
+    isValid: emailIsValid,
+    onChange: emailChange,
+    onFocus: emailFocus,
+    reset: emailReset,
   } = useUserInput((value) => {
-    return value === account.password;
+    if (typeof value === "string") {
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
+        return true;
+      }
+      return false;
+    } else {
+      return value > 0;
+    }
   });
   const {
     valueInput: passwordInput,
@@ -32,50 +39,43 @@ const Login: React.FC<props> = (props) => {
     onFocus: passwordFocus,
     reset: passwordReset,
   } = useUserInput((value) => {
-    return value === account.password;
+    if (typeof value === "string") {
+      return value.length > 5;
+    } else {
+      return value > 0;
+    }
+  });
+  const apiHook = useApi("/login", {
+    method: "POST",
+    body: {
+      email: emailInput,
+      password: passwordInput,
+    },
+    headers: {
+      "Content-Type": "application/json",
+    },
+    useData: (data) => {
+      if (data.token && data.validAcc) {
+        localStorage.setItem("token", data.token);
+        dispatch(authActions.setToken({ token: data.token }));
+      }
+      return data;
+    },
   });
 
-  useEffect(() => {
-    let time: null | NodeJS.Timeout;
-    if (error.length > 0 || success.length > 0) {
-      time = setTimeout(() => {
-        setError([]);
-        setSuccess([]);
-      }, 5000);
-    }
-    return () => {
-      if (time != null) {
-        clearTimeout(time);
-      }
-    };
-  }, [error, success]);
-  const formIsValid = usernameIsValid && passwordIsValid;
   function submitHandler(e: React.FormEvent) {
     e.preventDefault();
-    if (!formIsValid) {
-      setError([1]);
-      setSuccess([]);
-      return;
-    }
-    setSuccess([1]);
-    setError([]);
-    usernameReset();
-    passwordReset();
-    dispatch(
-      authActions.login({
-        account: { username: usernameInput, password: passwordInput },
-      })
-    );
-    props.onHideAuth!(true);
+    apiHook().then((data: Response | void) => {
+      if (data) {
+        if (data.token && data.token.length <= 0) {
+          return;
+        }
+        props.onHideAuth!(true);
+      }
+    });
   }
 
-  // function buttonHandler() {
-  //   if (!formIsValid) {
-  //     return;
-  //   }
-  //   props.onHideAuth!(true);
-  // }
-  const usernameClassName = usernameInvalid ? true : false;
+  const emailClassName = emailInvalid ? true : false;
   const passwordClassName = passwordInvalid ? true : false;
   return (
     <section className={classes.login}>
@@ -83,12 +83,12 @@ const Login: React.FC<props> = (props) => {
         <header className={classes.titleAuth}> Login </header>
         <form onSubmit={submitHandler} className={classes.formAuth}>
           <InputContainer
-            title="Username"
+            title="email"
             inputValues={{
-              inputValue: usernameInput,
-              inputChange: usernameChange,
-              inputFocus: usernameFocus,
-              inputOnClassName: usernameClassName,
+              inputValue: emailInput,
+              inputChange: emailChange,
+              inputFocus: emailFocus,
+              inputOnClassName: emailClassName,
               type: "submit",
             }}
           />
@@ -103,6 +103,7 @@ const Login: React.FC<props> = (props) => {
             }}
           />
           <Button>Login</Button>
+          <Button>Forgot your password?</Button>
         </form>
       </ModalBackdrop>
     </section>

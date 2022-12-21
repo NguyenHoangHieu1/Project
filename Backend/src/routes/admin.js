@@ -7,8 +7,9 @@ const express_1 = __importDefault(require("express"));
 const admin_1 = require("../controllers/admin");
 // import { getIndex } from "../controllers/main";
 const express_validator_1 = require("express-validator");
+const is_Auth_1 = __importDefault(require("../middleware/is-Auth"));
 const adminRoute = express_1.default.Router();
-adminRoute.post("/add-product", [
+adminRoute.post("/add-product", is_Auth_1.default, [
     (0, express_validator_1.body)("title", "The title has to be 5 characters long")
         .trim()
         .isLength({ min: 5 }),

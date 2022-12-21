@@ -1,5 +1,5 @@
 import { Link, Route, useLocation } from "react-router-dom";
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import props from "../../../Interfaces/Props";
 import Button from "../../UI/Button";
 import ProductItem from "../../Products/ProductItem";
@@ -16,7 +16,7 @@ const ProductsPage: React.FC<props> = (props) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   let pageCount = +queryParams.get("page")!;
-  if (pageCount === null) {
+  if (pageCount === null || location.search == "") {
     pageCount = 1;
   }
   const [searchFiltered, setSearchFiltered] = useState("");
@@ -59,7 +59,7 @@ const ProductsPage: React.FC<props> = (props) => {
       }
     }
   });
-  function filterChangeHandler(e: Event) {
+  function filterChangeHandler(e: FormEvent<HTMLInputElement>) {
     const value = e.target as HTMLInputElement;
     setSearchFiltered(value.value);
   }

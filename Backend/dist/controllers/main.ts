@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import Product from "../models/product";
+
 export const getIndex: RequestHandler = (req, res, next) => {
   Product.find()
     .then((products) => {
