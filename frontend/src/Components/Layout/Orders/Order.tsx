@@ -3,9 +3,9 @@ import Button from "../../UI/Button";
 import classes from "./Order.module.css";
 import { useAppSelector } from "../../../store";
 import { Product } from "../../../Interfaces/Product";
+import Card from "../../UI/Card";
 const Order: React.FC<props> = (props) => {
   const order = useAppSelector((state) => state.order);
-  console.log(order.orders);
   const loadedOrders = order.orders.map((orderItem) => {
     return (
       <li key={orderItem.orderId} className={classes.order}>
@@ -45,9 +45,9 @@ const Order: React.FC<props> = (props) => {
   const displayContent =
     loadedOrders.length > 0 ? loadedOrders : <h1>No Order Found!</h1>;
   return (
-    <section className={classes.orderContent}>
+    <Card>
       <ul className={classes.orderList}>{displayContent}</ul>
-    </section>
+    </Card>
   );
 };
 

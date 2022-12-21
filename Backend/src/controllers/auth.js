@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postActivate = exports.postSignup = exports.postLogin = exports.postCheckAccount = void 0;
+exports.postChangePassword = exports.postForgotPassword = exports.postActivate = exports.postSignup = exports.postLogin = exports.postCheckAccount = void 0;
 const bcryptjs_1 = require("bcryptjs");
 const user_1 = __importDefault(require("../models/user"));
 const express_validator_1 = require("express-validator");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const crypto_1 = __importDefault(require("crypto"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const userMail = "hoanghieufro@gmail.com";
 const passMail = "sxucbgjzbburuiig";
@@ -28,14 +29,16 @@ const transport = nodemailer_1.default.createTransport({
     },
 });
 const postCheckAccount = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("Im here again");
-    const userId = req.body.userId;
+    const token = req.body.token;
+    console.log(token);
     try {
-        const user = yield user_1.default.findById(userId);
+        const user = yield user_1.default.findOne({ token: token });
         if (!user) {
             return res.status(301).json({ message: "No Account found" });
         }
-        return res.status(202).json({ message: "Account found", userId: userId });
+        return res
+            .status(202)
+            .json({ message: "Account found", userId: user._id.toString() });
     }
     catch (error) {
         if (!error.status) {
@@ -89,46 +92,48 @@ const postSignup = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     if (!validationCheck.isEmpty()) {
         return res.status(400).json({ message: validationCheck.array()[0].msg });
     }
-    let tokenNumber = Math.ceil(Math.random() * 10000);
-    if (tokenNumber <= 999) {
-        tokenNumber += 1000;
-    }
-    try {
-        const user = yield user_1.default.findOne({ email: email });
-        if (user) {
-            return res.status(400).json({ message: "The Account already exist" });
+    crypto_1.default.randomBytes(32, (err, buffer) => __awaiter(void 0, void 0, void 0, function* () {
+        if (err) {
+            return res.status(500).json({ message: "Something gone wrong" });
         }
-        const hashedPassword = yield (0, bcryptjs_1.hash)(password, 12);
-        const userInfo = yield user_1.default.create({
-            email: email,
-            username: username,
-            password: hashedPassword,
-            cart: {
-                cartItems: [],
-                totalQuantity: 0,
-                totalPrice: 0,
-            },
-            token: tokenNumber,
-            tokenExp: new Date().getTime() + 36000,
-        });
-        transport.sendMail({
-            from: userMail,
-            to: email,
-            subject: "Register successfully",
-            html: `
+        const token = buffer.toString("hex");
+        try {
+            const user = yield user_1.default.findOne({ email: email });
+            if (user) {
+                return res.status(400).json({ message: "The Account already exist" });
+            }
+            const hashedPassword = yield (0, bcryptjs_1.hash)(password, 12);
+            yield user_1.default.create({
+                email: email,
+                username: username,
+                password: hashedPassword,
+                cart: {
+                    cartItems: [],
+                    totalQuantity: 0,
+                    totalPrice: 0,
+                },
+                token: token,
+                tokenExp: new Date().getTime() + 36000,
+            });
+            transport.sendMail({
+                from: userMail,
+                to: email,
+                subject: "Register successfully",
+                html: `
       <h1>Thank you so much for registering our services</h1>
-      <p>Here is your passcode: ${tokenNumber}</p>
-      <p>Click <a href="http://localhost:3000/activate-password/${userInfo._id.toString()}">here</a> to be able to enter your passcode </p>
+      <p>Here is your passcode: ${token}</p>
+      <p>Click <a href="http://localhost:3000/activate-password/${token}">here</a> to be able to enter your passcode </p>
       `,
-        });
-        return res.status(201).json({ message: "Created Successfully" });
-    }
-    catch (err) {
-        if (!err.status) {
-            err.status = 500;
+            });
+            return res.status(201).json({ message: "Created Successfully" });
         }
-        next(err);
-    }
+        catch (err) {
+            if (!err.status) {
+                err.status = 500;
+            }
+            next(err);
+        }
+    }));
 });
 exports.postSignup = postSignup;
 const postActivate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -153,3 +158,52 @@ const postActivate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.postActivate = postActivate;
+const postForgotPassword = (req, res, next) => {
+    const email = req.body.email;
+    crypto_1.default.randomBytes(32, (err, buffer) => __awaiter(void 0, void 0, void 0, function* () {
+        if (err) {
+            return res
+                .status(500)
+                .json({ message: "Something is wrong with the server" });
+        }
+        const token = buffer.toString("hex");
+        const user = yield user_1.default.findOne({ email: email });
+        if (!user) {
+            return res.status(406).json({ message: "Account not found" });
+        }
+        else if (user.token) {
+            return res.status(406).json({
+                message: "This account already has the token to do something else!",
+            });
+        }
+        user.token = token;
+        user.tokenExp = new Date();
+        yield user.save();
+        transport.sendMail({
+            from: userMail,
+            to: email,
+            subject: "Forgetting your password",
+            html: `
+    <h1>We've heard that you have forgotten your password, Want to change your password ?</h1> 
+    <p>Click on this <a href="http://localhost:3000/change-password/${token}">link</a> here to be able to change the password</p>
+    `,
+        });
+        res.status(202).json({ message: "Sent an email to your gmail!" });
+    }));
+};
+exports.postForgotPassword = postForgotPassword;
+const postChangePassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const newPassword = req.body.password;
+    const token = req.body.token;
+    const user = yield user_1.default.findOne({ token: token });
+    if (!user) {
+        return res.status(406).json({ message: "Account not found" });
+    }
+    const hashedPassword = yield (0, bcryptjs_1.hash)(newPassword, 12);
+    user.password = hashedPassword;
+    user.token = undefined;
+    user.tokenExp = undefined;
+    yield user.save();
+    return res.status(200).json({ message: "Changed Password successfully" });
+});
+exports.postChangePassword = postChangePassword;

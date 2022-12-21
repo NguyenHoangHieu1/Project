@@ -38,7 +38,7 @@ const userSchema = new mongoose_1.Schema({
         required: true,
     },
     token: {
-        type: Number,
+        type: String,
     },
     tokenExp: {
         type: Date,

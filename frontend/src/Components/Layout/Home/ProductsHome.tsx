@@ -6,6 +6,7 @@ import ProductItem from "../../Products/ProductItem";
 import classes from "./ProductsHome.module.css";
 import Products from "../../Products/Products";
 import { useAppSelector } from "../../../store";
+import Card from "../../UI/Card";
 const ProductsLayout: React.FC<props> = (props) => {
   const products = useAppSelector((state) => state.product).products;
   let isEnough: boolean = false;
@@ -33,7 +34,7 @@ const ProductsLayout: React.FC<props> = (props) => {
   }
 
   return (
-    <section className={classes.products}>
+    <Card>
       <div className={classes.title}>
         <h3>Products:</h3>
         <p>Buy one of the finest Products in the world</p>
@@ -42,7 +43,7 @@ const ProductsLayout: React.FC<props> = (props) => {
       <Products loadedProducts={loadedProducts}></Products>
 
       <div style={{ textAlign: "center" }}>{moreButton}</div>
-    </section>
+    </Card>
   );
 };
 

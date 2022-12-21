@@ -2,6 +2,12 @@ import { RequestHandler } from "express";
 import Product from "../models/product";
 import { validationResult } from "express-validator";
 
+export const postYourProducts: RequestHandler = async (req, res, next) => {
+  const userId = req.body.userId;
+  const products = await Product.findOne({ userId: userId });
+  return res.json(200).json({ message: "Products", products: products });
+};
+
 export const postAddProduct: RequestHandler = (req, res, next) => {
   const title = req.body.title;
   const price = req.body.price;

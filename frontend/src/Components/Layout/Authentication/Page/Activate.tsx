@@ -1,6 +1,5 @@
 import props from "../../../../Interfaces/Props";
 import InputContainer from "../../../UI/InputContainer";
-import classes from "./Activate.module.css";
 import useUserInput from "../../../../customHooks/useUserInput";
 import Button from "../../../UI/Button";
 import { FormEvent, useEffect } from "react";
@@ -9,26 +8,26 @@ import { Response } from "../../../../Interfaces/Response";
 import { Redirect, useHistory, useParams } from "react-router";
 import { useState } from "react";
 import { Params } from "../../../../Interfaces/Params";
+import Card from "../../../UI/Card";
 const Activate: React.FC<props> = (props) => {
-  const [RedirectLink, setRedirectLink] = useState(false);
-  const userId = useParams<Params>().userId;
+  const history = useHistory();
+  const token = useParams<Params>().token;
+
   const apiCheckAcccount = useApi("/check-account", {
     method: "POST",
-    body: { userId: userId },
+    body: { token: token },
     headers: {
       "Content-Type": "application/json",
     },
     useData(data) {
-      console.log(data);
       return data;
     },
   });
   useEffect(() => {
     apiCheckAcccount()
       .then((data) => {
-        console.log(data);
         if ((data && !data.userId) || !data) {
-          setRedirectLink(true);
+          history.replace("/");
         }
       })
       .catch((err) => console.log(err));
@@ -41,7 +40,7 @@ const Activate: React.FC<props> = (props) => {
     onFocus: passCodeFocus,
     reset: passCodeReset,
   } = useUserInput((data) => {
-    if (typeof data === "string" && data.length === 4) {
+    if (typeof data === "string" && data.length > 4) {
       return true;
     } else {
       return false;
@@ -64,31 +63,25 @@ const Activate: React.FC<props> = (props) => {
     apiHook().then((data: Response | void) => {
       if (!formIsValid || data === undefined) {
         return;
-      } else {
-        setRedirectLink(true);
       }
     });
   }
   return (
-    <>
-      {RedirectLink ? (
-        <Redirect to="/" />
-      ) : (
-        <form onSubmit={submitHandler}>
-          <InputContainer
-            title="Pass Code"
-            inputValues={{
-              inputValue: passCodeInput,
-              inputChange: passCodeChange,
-              inputFocus: passCodeFocus,
-              inputOnClassName: passCodeClassName,
-              type: "submit",
-            }}
-          />
-          <Button>Activate!</Button>
-        </form>
-      )}
-    </>
+    <Card>
+      <form onSubmit={submitHandler}>
+        <InputContainer
+          title="Pass Code"
+          inputValues={{
+            inputValue: passCodeInput,
+            inputChange: passCodeChange,
+            inputFocus: passCodeFocus,
+            inputOnClassName: passCodeClassName,
+            type: "submit",
+          }}
+        />
+        <Button>Activate!</Button>
+      </form>
+    </Card>
   );
 };
 

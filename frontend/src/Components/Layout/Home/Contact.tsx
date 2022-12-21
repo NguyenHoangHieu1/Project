@@ -1,10 +1,11 @@
 import Form from "./Form";
 import classes from "./Contact.module.css";
+import Card from "../../UI/Card";
 const Contact: React.FC = (props) => {
   return (
-    <section className={classes.contact}>
+    <Card>
       <Form></Form>
-    </section>
+    </Card>
   );
 };
 export default Contact;

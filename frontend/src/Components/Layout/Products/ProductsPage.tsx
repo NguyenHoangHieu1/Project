@@ -8,6 +8,7 @@ import Input from "../../UI/Input";
 import Products from "../../Products/Products";
 import Container from "../../UI/Container";
 import { useAppSelector } from "../../../store";
+import Card from "../../UI/Card";
 
 const ITEMS_PER_PAGE = 3;
 
@@ -92,7 +93,7 @@ const ProductsPage: React.FC<props> = (props) => {
   );
 
   return (
-    <section className={classes.products}>
+    <Card>
       <Container>
         <div className={classes.title}>
           <h3>Products:</h3>
@@ -105,7 +106,7 @@ const ProductsPage: React.FC<props> = (props) => {
         <Products loadedProducts={loadedProducts}></Products>
         <nav className={classes.pagination}>{pagination}</nav>
       </Container>
-    </section>
+    </Card>
   );
 };
 

@@ -1,7 +1,9 @@
 import { Router } from "express";
 import {
   postActivate,
+  postChangePassword,
   postCheckAccount,
+  postForgotPassword,
   postLogin,
   postSignup,
 } from "../controllers/auth";
@@ -12,6 +14,8 @@ const authRoute = Router();
 authRoute.post("/check-account", postCheckAccount);
 authRoute.post("/activate", postActivate);
 authRoute.post("/login", postLogin);
+authRoute.post("/forgot-password", postForgotPassword);
+authRoute.post("/change-password", postChangePassword);
 
 authRoute.post(
   "/signup",

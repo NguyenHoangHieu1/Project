@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "../../../../store";
 import useApi from "../../../../customHooks/useApi";
 import { Response } from "../../../../Interfaces/Response";
 import { Route } from "react-router";
+import { Link } from "react-router-dom";
 const Login: React.FC<props> = (props) => {
   const dispatch = useAppDispatch();
   const {
@@ -103,7 +104,7 @@ const Login: React.FC<props> = (props) => {
             }}
           />
           <Button>Login</Button>
-          <Button>Forgot your password?</Button>
+          <Link to="/forgot-password">Forgot your password ?</Link>
         </form>
       </ModalBackdrop>
     </section>
