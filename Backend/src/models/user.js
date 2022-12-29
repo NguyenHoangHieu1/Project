@@ -46,8 +46,8 @@ const userSchema = new mongoose_1.Schema({
     cart: {
         cartItems: [
             {
-                cartItem: {
-                    type: mongoose_1.default.Types.ObjectId,
+                productId: {
+                    type: mongoose_1.default.SchemaTypes.ObjectId,
                     ref: "Product",
                     required: true,
                 },
@@ -67,4 +67,5 @@ const userSchema = new mongoose_1.Schema({
         },
     },
 });
-exports.default = mongoose_1.default.model("User", userSchema);
+const User = mongoose_1.default.model("User", userSchema);
+exports.default = User;

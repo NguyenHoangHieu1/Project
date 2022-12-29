@@ -1,4 +1,5 @@
-import { Product } from "./Product";
+import Cart from "./Cart";
+import Product from "./Product";
 
 export interface Response {
   products?: Product[];
@@ -7,4 +8,6 @@ export interface Response {
   validAcc?: string;
   message: string;
   userId?: string;
+  cart?: Cart;
+  cartItems: Product[];
 }

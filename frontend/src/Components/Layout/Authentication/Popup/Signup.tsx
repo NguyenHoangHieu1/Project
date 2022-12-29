@@ -48,9 +48,7 @@ const Signup: React.FC<props> = (props) => {
     reset: passwordReset,
   } = useUserInput((value) => {
     if (typeof value === "string") {
-      if (
-        /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,}$/.test(value)
-      ) {
+      if (/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/.test(value)) {
         return true;
       }
       return false;
@@ -58,22 +56,22 @@ const Signup: React.FC<props> = (props) => {
       return value > 0;
     }
   });
-  const apiHook = useApi("/signup", {
-    method: "POST",
-    body: {
-      email: emailInput,
-      username: usernameInput,
-      password: passwordInput,
-    },
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const apiHook = useApi();
   const formIsValid = usernameIsValid && passwordIsValid && emailIsValid;
 
   function submitHandler(e: React.FormEvent) {
     e.preventDefault();
-    apiHook();
+    apiHook("/signup", {
+      method: "POST",
+      body: {
+        email: emailInput,
+        username: usernameInput,
+        password: passwordInput,
+      },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     if (!formIsValid) {
       return;
     }

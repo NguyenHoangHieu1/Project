@@ -3,38 +3,21 @@ import classes from "./Recommend.module.css";
 
 import { useAppSelector } from "../../../store";
 import ProductItem from "../../Products/ProductItem";
+import { useEffect, useState } from "react";
+import Product from "../../../Interfaces/Product";
+import useApi from "../../../customHooks/useApi";
 const Recommend: React.FC<props> = (props) => {
-  const products = useAppSelector((state) => state.product).products;
-  let currentItemIndex = 0;
-  let productCount = 0;
-  const loadedProducts = products.filter((item, index) => {
-    if (item._id === props.product?._id) {
-      currentItemIndex = index;
-    }
-    return item._id !== props.product?._id;
-  });
-  let recommendProducts = loadedProducts.map((item, index) => {
-    if (productCount !== 3) {
-      if (currentItemIndex - 2 == index) {
-        productCount++;
-        return item;
-      } else if (currentItemIndex - 1 == index) {
-        productCount++;
-        return item;
-      } else if (currentItemIndex + 1 == index) {
-        productCount++;
-        return item;
-      } else if (currentItemIndex + 2 == index) {
-        productCount++;
-        return item;
-      } else {
-        productCount++;
-        return item;
-      }
-    }
-  });
+  const [products, setProducts] = useState<Product[]>([]);
+  const apiHook = useApi();
+  useEffect(() => {
+    apiHook(`/product-recommend/${props.product?._id}`, {
+      useData(data) {
+        if (data && data.products) setProducts(data.products);
+      },
+    });
+  }, []);
 
-  const displayProducts = recommendProducts.map((item) => {
+  const displayProducts = products.map((item) => {
     if (item) {
       return <ProductItem key={item._id} product={item} />;
     }

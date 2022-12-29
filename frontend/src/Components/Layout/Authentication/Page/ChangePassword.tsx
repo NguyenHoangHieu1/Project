@@ -11,20 +11,20 @@ import { Params } from "../../../../Interfaces/Params";
 const ChangePassword: React.FC<props> = (props) => {
   const token = useParams<Params>().token;
   const history = useHistory();
-  const apiCheckAcccount = useApi("/check-account", {
-    method: "POST",
-    body: {
-      token: token,
-    },
-    headers: {
-      "Content-Type": "application/json",
-    },
-    useData(data) {
-      return data;
-    },
-  });
+  const apiCheckAcccount = useApi();
   useEffect(() => {
-    apiCheckAcccount().then((data) => {
+    apiCheckAcccount("/check-account", {
+      method: "POST",
+      body: {
+        token: token,
+      },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      useData(data) {
+        return data;
+      },
+    }).then((data) => {
       if (!data || (data && !data.userId)) {
         history.replace("/");
       }
@@ -50,19 +50,19 @@ const ChangePassword: React.FC<props> = (props) => {
       return value > 0;
     }
   });
-  const apiHook = useApi("/change-password", {
-    method: "POST",
-    body: {
-      password: passwordInput,
-      token: token,
-    },
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const apiHook = useApi();
   function submitHandler(e: FormEvent) {
     e.preventDefault();
-    apiHook();
+    apiHook("/change-password", {
+      method: "POST",
+      body: {
+        password: passwordInput,
+        token: token,
+      },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     history.replace("/");
   }
   const passwordClassName = passwordInvalid ? true : false;

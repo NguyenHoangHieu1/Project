@@ -30,7 +30,6 @@ const transport = nodemailer_1.default.createTransport({
 });
 const postCheckAccount = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.body.token;
-    console.log(token);
     try {
         const user = yield user_1.default.findOne({ token: token });
         if (!user) {

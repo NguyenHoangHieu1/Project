@@ -40,6 +40,9 @@ import { Response } from "./Interfaces/Response";
 import { productActions } from "./store/product";
 import ForgotPassword from "./Components/Layout/Authentication/Page/ForgotPassword";
 import ChangePassword from "./Components/Layout/Authentication/Page/ChangePassword";
+import YourProducts from "./Components/Layout/Your-Products/YourProducts";
+import Product from "./Interfaces/Product";
+import EditProduct from "./Components/Layout/Edit-Product/EditProduct";
 const UI = React.lazy(() => import("./Components/Layout/Generals/UI"));
 const Activate = React.lazy(
   () => import("./Components/Layout/Authentication/Page/Activate")
@@ -47,23 +50,28 @@ const Activate = React.lazy(
 
 const App: React.FC<props> = () => {
   const dispatch = useAppDispatch();
-  const dataApi = useApi("/", {
-    useData(data: Response) {
-      dispatch(productActions.replaceProducts(data.products));
-    },
-  });
+  const [products, setProducts] = useState<Product[]>([]);
+  const dataApi = useApi();
   const [login, setLogin] = useState(false);
   const [signup, setSignup] = useState(false);
   const isLoggedIn = useAppSelector((state) => state.auth).token;
+  const userId = useAppSelector((state) => state.auth).userId;
   useEffect(() => {
-    dataApi();
+    dataApi("/", {
+      useData(data: Response) {
+        if (data && data.products) {
+          setProducts(data.products);
+        }
+      },
+    });
   }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
     if (token) {
       if (token.length > 0) {
-        dispatch(authActions.setToken({ token: token }));
+        dispatch(authActions.setAuth({ token: token, userId: userId }));
       }
     }
   }, [isLoggedIn]);
@@ -117,6 +125,12 @@ const App: React.FC<props> = () => {
               </Route>,
               <Route key="3" path="/add-product">
                 <AddProduct />
+              </Route>,
+              <Route key="4" path="/your-products/:userId/">
+                <YourProducts />
+              </Route>,
+              <Route key="5" path="/edit-product/:productId">
+                <EditProduct />
               </Route>,
             ]}
             <Route path="/activate-password/:token">

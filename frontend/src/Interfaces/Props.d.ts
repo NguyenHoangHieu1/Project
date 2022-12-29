@@ -1,5 +1,6 @@
 import { FormEvent, ReactNode, Ref } from "react";
-import { Product } from "./Product";
+import Cart from "./Cart";
+import Product from "./Product";
 
 interface props {
   children?: ReactNode;
@@ -28,6 +29,12 @@ interface props {
   status?: "success" | "loading";
   token?: string;
   userId?: string;
+  products?: Product[];
+  pagination?: boolean;
+  editProduct?: boolean;
+  linkPage?: string;
+  deleteProduct?: (productId: string) => void;
+  onRemoveItem?: (Cart: Cart) => void;
 }
 
 export default props;

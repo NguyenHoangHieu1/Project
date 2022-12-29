@@ -4,9 +4,12 @@ import { useAppDispatch } from "../store";
 import product, { productActions } from "../store/product";
 import { Response } from "../Interfaces/Response";
 import { uiActions } from "../store/ui";
-const useApi = (url: string, configuration?: configuration) => {
+const useApi = () => {
   const dispatch = useAppDispatch();
-  const fetchFunction = async function () {
+  const fetchFunction = async function (
+    url: string,
+    configuration?: configuration
+  ) {
     try {
       dispatch(
         uiActions.openMessage({

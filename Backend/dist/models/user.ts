@@ -1,6 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, ObjectId } from "mongoose";
+import Product from "./product";
+import { User } from "../interfaces/User";
 
-const userSchema = new Schema({
+const userSchema = new Schema<User>({
   email: {
     type: String,
     required: true,
@@ -22,8 +24,8 @@ const userSchema = new Schema({
   cart: {
     cartItems: [
       {
-        cartItem: {
-          type: mongoose.Types.ObjectId,
+        productId: {
+          type: mongoose.SchemaTypes.ObjectId,
           ref: "Product",
           required: true,
         },
@@ -43,5 +45,6 @@ const userSchema = new Schema({
     },
   },
 });
+const User = mongoose.model("User", userSchema);
 
-export default mongoose.model("User", userSchema);
+export default User;

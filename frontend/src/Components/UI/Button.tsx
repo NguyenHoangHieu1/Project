@@ -8,14 +8,7 @@ const Button: React.FC<props> = (props) => {
 
   return (
     <button
-      // style={styles}
-      onClick={
-        props.onClick
-          ? props.onClick
-          : () => {
-              console.log(props.onClick);
-            }
-      }
+      onClick={props.onClick ? props.onClick : () => {}}
       className={classes.button}
     >
       {props.children}

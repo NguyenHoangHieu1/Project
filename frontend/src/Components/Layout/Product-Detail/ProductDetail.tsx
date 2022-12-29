@@ -2,28 +2,41 @@ import props from "../../../Interfaces/Props";
 import Button from "../../UI/Button";
 import classes from "./ProductDetail.module.css";
 import { useParams } from "react-router";
-import { useAppSelector } from "../../../store";
-import { ChangeEvent, useState } from "react";
-import { useAppDispatch } from "../../../store";
-import { cartActions } from "../../../store/cart";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../store";
 import Recommend from "./Recommend";
+import { Params } from "../../../Interfaces/Params";
+import useApi from "../../../customHooks/useApi";
+import Product from "../../../Interfaces/Product";
 const ProductDetail: React.FC<props> = (props) => {
-  const products = useAppSelector((state) => state.product).products;
-  const dispatch = useAppDispatch();
+  const [product, setProduct] = useState<Product>();
   const [quantity, setQuantity] = useState(1);
-
-  const { productId }: { productId: string } = useParams();
-  const product = products.find((product) => {
-    return product._id == productId;
-  });
-  function addToCartHandler() {
-    dispatch(
-      cartActions.addItemToCart({ product: { ...product, quantity: quantity } })
-    );
+  const apiHook = useApi();
+  const productId = useParams<Params>().productId;
+  const userId = useAppSelector((state) => state.auth).userId;
+  useEffect(() => {
+    apiHook("/product-detail/" + productId, {
+      useData(data) {
+        setProduct(data.product);
+      },
+    });
+  }, []);
+  function addToCartHandler(): void {
+    apiHook("/add-to-cart", {
+      method: "put",
+      body: {
+        productId: productId,
+        quantity: quantity,
+        userId: userId,
+      },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
   let price = 0;
   if (product) {
-    price = product?.price * quantity;
+    price = product.price * quantity;
   }
   const changeQuantityHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target as HTMLInputElement;
@@ -36,17 +49,22 @@ const ProductDetail: React.FC<props> = (props) => {
   if (product) {
     productElement = (
       <>
-        <h1>{product?.title}</h1>
-        <img src={product?.imageUrl} alt={product?.description} />
-        <p>{product?.description}</p>
+        <h1>{product.title}</h1>
+        <img src={product.imageUrl} alt={product.description} />
+        <p>{product.description}</p>
         <label htmlFor="quantity">Quantity:</label>
-        <input min="1" onChange={changeQuantityHandler} type="number" />
+        <input
+          value={quantity}
+          min="1"
+          onChange={changeQuantityHandler}
+          type="number"
+        />
         <i>{price.toFixed(2)}$</i>
         <Button onClick={addToCartHandler}>Add To Cart</Button>
       </>
     );
   } else {
-    productElement = <p>Product not found!</p>;
+    productElement = <p>Loading!</p>;
   }
   return (
     <section className={classes.detail}>

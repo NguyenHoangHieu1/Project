@@ -13,18 +13,18 @@ const Activate: React.FC<props> = (props) => {
   const history = useHistory();
   const token = useParams<Params>().token;
 
-  const apiCheckAcccount = useApi("/check-account", {
-    method: "POST",
-    body: { token: token },
-    headers: {
-      "Content-Type": "application/json",
-    },
-    useData(data) {
-      return data;
-    },
-  });
+  const apiCheckAcccount = useApi();
   useEffect(() => {
-    apiCheckAcccount()
+    apiCheckAcccount("/check-account", {
+      method: "POST",
+      body: { token: token },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      useData(data) {
+        return data;
+      },
+    })
       .then((data) => {
         if ((data && !data.userId) || !data) {
           history.replace("/");
@@ -46,21 +46,21 @@ const Activate: React.FC<props> = (props) => {
       return false;
     }
   });
-  const apiHook = useApi("/activate", {
-    method: "POST",
-    body: { passCode: passCodeInput },
-    headers: {
-      "Content-Type": "application/json",
-    },
-    useData(data) {
-      return data;
-    },
-  });
+  const apiHook = useApi();
   const passCodeClassName = passCodeInvalid ? true : false;
   const formIsValid = passCodeIsValid;
   function submitHandler(e: FormEvent) {
     e.preventDefault();
-    apiHook().then((data: Response | void) => {
+    apiHook("/activate", {
+      method: "POST",
+      body: { passCode: passCodeInput },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      useData(data) {
+        return data;
+      },
+    }).then((data: Response | void) => {
       if (!formIsValid || data === undefined) {
         return;
       }

@@ -1,10 +1,23 @@
 import express from "express";
-import { postAddProduct } from "../controllers/admin";
-// import { getIndex } from "../controllers/main";
+import {
+  postAddProduct,
+  DeleteProduct,
+  putEditProduct,
+  GetEditProduct,
+  getYourProducts,
+} from "../controllers/admin";
 import { body } from "express-validator";
 import isAuth from "../middleware/is-Auth";
 
 const adminRoute = express.Router();
+
+adminRoute.get("/your-products/:userId", isAuth, getYourProducts);
+
+adminRoute.get("/edit-product/:productId", isAuth, GetEditProduct);
+
+adminRoute.put("/edit-product", isAuth, putEditProduct);
+
+adminRoute.delete("/delete-product", isAuth, DeleteProduct);
 
 adminRoute.post(
   "/add-product",

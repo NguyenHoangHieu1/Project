@@ -1,8 +1,10 @@
 .productItem {
-  width: 30%;
+  /* width: 30%;   */
   border: 1px solid #93ed3e;
   background-color: #8adfb0;
   border-radius: 2rem;
+  flex-grow: 1;
+  flex-basis: 150px;
 }
 @media (max-width: 600px) {
   .productItem {
@@ -27,6 +29,7 @@
   width: 100%;
   border-top-left-radius: 2rem;
   border-top-right-radius: 2rem;
+  aspect-ratio: 2/1;
 }
 .details {
   border: 1px solid black;

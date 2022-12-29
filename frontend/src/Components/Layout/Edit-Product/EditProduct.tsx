@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
 import props from "../../../Interfaces/Props";
 import InputContainer from "../../UI/InputContainer";
-import classes from "./AddProduct.module.css";
+import classes from "./EditProduct.module.css";
 import useUserInput from "../../../customHooks/useUserInput";
 import Button from "../../UI/Button";
 import useMessage from "../../../customHooks/useMessage";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { productActions } from "../../../store/product";
 import useApi from "../../../customHooks/useApi";
-
-const AddProduct: React.FC<props> = (props) => {
+import { useParams, useHistory } from "react-router";
+import { Params } from "../../../Interfaces/Params";
+const EditProduct: React.FC<props> = (props) => {
+  const productId = useParams<Params>().productId;
+  const history = useHistory();
   const dispatch = useAppDispatch();
   const changeMessage = useMessage();
   const userId = useAppSelector((state) => state.auth.userId);
+
   const {
     valueInput: titleInput,
     onChange: titleChange,
@@ -73,27 +77,39 @@ const AddProduct: React.FC<props> = (props) => {
     }
   });
   const apiHook = useApi();
-
+  useEffect(() => {
+    apiHook("/admin/edit-product/" + productId, {
+      useData(data) {
+        return data;
+      },
+    }).then((data) => {
+      if (data && data.product) {
+        console.log(data.product);
+        titleChange(data.product.title);
+        priceChange(data.product.price);
+        imageChange(data.product.imageUrl);
+        descriptionChange(data.product.description);
+      }
+    });
+  }, []);
   let formValid =
     titleIsValid && priceIsValid && descriptionIsValid && imageIsValid;
   function submitHandler(e: React.FormEvent) {
     e.preventDefault();
-    apiHook("/admin/add-product", {
-      method: "POST",
+    apiHook("/admin/edit-product", {
+      method: "PUT",
       body: {
-        _id: "",
+        productId: productId,
         title: titleInput,
         price: +priceInput,
         imageUrl: imageInput,
         description: descriptionInput,
-        userId: userId,
       },
       headers: {
         "Content-Type": "application/json",
       },
-      useData(data) {
-        dispatch(productActions.addProduct({ product: data }));
-      },
+    }).then(() => {
+      history.replace(`/your-products/${userId}`);
     });
     if (!formValid) {
       return;
@@ -152,7 +168,7 @@ const AddProduct: React.FC<props> = (props) => {
             type: "submit",
           }}
         />
-        <Button>Create</Button>
+        <Button>Edit</Button>
       </form>
       <aside className={classes.information}>
         <header className={classes.header}>Rules of Creating a product</header>
@@ -176,4 +192,4 @@ const AddProduct: React.FC<props> = (props) => {
   );
 };
 
-export default React.memo(AddProduct);
+export default React.memo(EditProduct);

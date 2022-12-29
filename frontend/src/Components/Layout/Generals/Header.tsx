@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom";
 import classes from "./Header.module.css";
 import Button from "../../UI/Button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import props from "../../../Interfaces/Props";
 import useApi from "../../../customHooks/useApi";
-import { useAppDispatch } from "../../../store";
+import { useAppDispatch, useAppSelector } from "../../../store";
 import { authActions } from "../../../store/auth";
 import useMessage from "../../../customHooks/useMessage";
 
@@ -12,15 +12,17 @@ const Header: React.FC<props> = (props) => {
   const message = useMessage();
   const dispatch = useAppDispatch();
   const [changeHeaderBar, setChangeHeaderBar] = useState(`${classes.header} `);
-  useApi("/");
+  const userId = useAppSelector((state) => state.auth).userId;
   const [menuMobile, setMenuMobile] = useState(false);
-  document.addEventListener("scroll", () => {
-    if (window.scrollY >= 100) {
-      setChangeHeaderBar(`${classes.header} ${classes.changed}`);
-    } else {
-      setChangeHeaderBar(`${classes.header}`);
-    }
-  });
+  useEffect(() => {
+    document.addEventListener("scroll", () => {
+      if (window.scrollY >= 100) {
+        setChangeHeaderBar(`${classes.header} ${classes.changed}`);
+      } else {
+        setChangeHeaderBar(`${classes.header}`);
+      }
+    });
+  }, [window.scrollY]);
   function changeMenuMobileHandler() {
     setMenuMobile((prevState) => {
       return !prevState;
@@ -28,7 +30,7 @@ const Header: React.FC<props> = (props) => {
   }
   function logOutHandler() {
     message({ title: "Logout Successfully", status: "success" });
-    dispatch(authActions.clearToken({}));
+    dispatch(authActions.clearAuth({}));
   }
   return (
     <header className={changeHeaderBar}>
@@ -84,7 +86,7 @@ const Header: React.FC<props> = (props) => {
                   Add Product
                 </NavLink>
                 <NavLink
-                  to="/your-products"
+                  to={`/your-products/${userId}`}
                   className={classes.item}
                   activeClassName={classes.itemActive}
                 >

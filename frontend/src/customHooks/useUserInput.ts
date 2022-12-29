@@ -6,8 +6,12 @@ const useUserInput = (condition: (data: string | number) => boolean) => {
   let isValid = condition(valueInput) && focus;
   let inValid = !isValid && focus;
 
-  function onChange(e: React.FormEvent<HTMLInputElement>) {
-    setValueInput(e.currentTarget.value);
+  function onChange(e: React.FormEvent<HTMLInputElement> | string | number) {
+    if (typeof e !== "string" && typeof e !== "number") {
+      setValueInput(e.currentTarget.value);
+    } else {
+      setValueInput("" + e);
+    }
   }
   function onFocus() {
     setFocus(true);

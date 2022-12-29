@@ -19,7 +19,6 @@ const transport = nodemail.createTransport({
 
 export const postCheckAccount: RequestHandler = async (req, res, next) => {
   const token = req.body.token;
-  console.log(token);
   try {
     const user = await User.findOne({ token: token });
 

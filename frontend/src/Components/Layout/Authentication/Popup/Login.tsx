@@ -46,27 +46,30 @@ const Login: React.FC<props> = (props) => {
       return value > 0;
     }
   });
-  const apiHook = useApi("/login", {
-    method: "POST",
-    body: {
-      email: emailInput,
-      password: passwordInput,
-    },
-    headers: {
-      "Content-Type": "application/json",
-    },
-    useData: (data) => {
-      if (data.token && data.validAcc) {
-        localStorage.setItem("token", data.token);
-        dispatch(authActions.setToken({ token: data.token }));
-      }
-      return data;
-    },
-  });
+  const apiHook = useApi();
 
   function submitHandler(e: React.FormEvent) {
     e.preventDefault();
-    apiHook().then((data: Response | void) => {
+    apiHook("/login", {
+      method: "POST",
+      body: {
+        email: emailInput,
+        password: passwordInput,
+      },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      useData: (data) => {
+        if (data.token && data.validAcc && data.userId) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("userId", data.userId);
+          dispatch(
+            authActions.setAuth({ token: data.token, userId: data.userId })
+          );
+        }
+        return data;
+      },
+    }).then((data: Response | void) => {
       if (data) {
         if (data.token && data.token.length <= 0) {
           return;

@@ -9,9 +9,22 @@ authRoute.post("/activate", auth_1.postActivate);
 authRoute.post("/login", auth_1.postLogin);
 authRoute.post("/forgot-password", auth_1.postForgotPassword);
 authRoute.post("/change-password", auth_1.postChangePassword);
-authRoute.post("/signup", [
-    (0, express_validator_1.body)("email", "Please Enter the right format of the email").isEmail(),
-    (0, express_validator_1.body)("username", "Please enter your username").isLength({ min: 5 }),
-    (0, express_validator_1.body)("password", "Please enter your password a little bit stronger").isStrongPassword(),
-], auth_1.postSignup);
+authRoute.post(
+  "/signup",
+  [
+    (0, express_validator_1.body)(
+      "email",
+      "Please Enter the right format of the email"
+    ).isEmail(),
+    (0, express_validator_1.body)(
+      "username",
+      "Please enter your username"
+    ).isLength({ min: 5 }),
+    (0, express_validator_1.body)(
+      "password",
+      "Please enter your password a little bit stronger"
+    ).isStrongPassword(),
+  ],
+  auth_1.postSignup
+);
 exports.default = authRoute;

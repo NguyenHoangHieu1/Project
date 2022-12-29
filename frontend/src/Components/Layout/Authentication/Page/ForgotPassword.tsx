@@ -23,19 +23,19 @@ const ForgotPassword: React.FC<props> = (props) => {
     }
   });
 
-  const apiHook = useApi("/forgot-password", {
-    method: "POST",
-    body: {
-      email: emailInput,
-    },
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const apiHook = useApi();
   const formIsValid = emailIsValid;
   function submitHandler(e: React.FormEvent) {
     e.preventDefault();
-    apiHook();
+    apiHook("/forgot-password", {
+      method: "POST",
+      body: {
+        email: emailInput,
+      },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     if (!formIsValid) {
       return;
     }
